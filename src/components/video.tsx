@@ -43,7 +43,11 @@ const Video = ({
     // Position change requested.
     useEffect(() => {
         if (typeof state.position !== "undefined" && typeof state.position.requested === "number" && videoElementRef.current !== null) {
-            videoElementRef.current.fastSeek(state.position.requested);
+            if (typeof videoElementRef.current.fastSeek === 'function') {
+                videoElementRef.current.fastSeek(state.position.requested);
+            } else {
+                videoElementRef.current.currentTime = state.position.requested;
+            }
             dispatch({ type: POSITION_REQUEST });
         }
     }, [state.position?.requested]);
@@ -125,7 +129,7 @@ const Video = ({
     }, [availableQualitiesUpdatedHandler, qualityUpdatedHandler, availableAudioTracksUpdatedHandler, audioTrackUpdatedHandler, availableSubtitleTracksUpdatedHandler, subtitleTrackUpdatedHandler]);
 
     const convertRanges = (ranges?: TimeRanges): [number, number][] => {
-        if (typeof ranges === 'undefined') return [];
+        if (typeof ranges === "undefined") return [];
         return [...Array(ranges.length).keys()].map(i => [ranges.start(i), ranges.end(i)]);
     };
 
