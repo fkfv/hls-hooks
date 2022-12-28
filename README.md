@@ -52,5 +52,7 @@ root.render(
     </React.StrictMode>
 );
 ```
+
+See [API.md](docs/API.md) for further explanation and API reference.
 ## License
 Licensed under the MIT license.
