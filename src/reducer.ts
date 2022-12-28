@@ -1,9 +1,10 @@
-import {HlsHooksAction, HlsHooksState} from "./types";
+import {HlsHooksAction, HlsHooksState, HlsPlaybackStates} from "./types";
 import {
     AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET,
     POSITION_REQUEST, POSITION_SET, QUALITY_SELECT, QUALITY_SET, SOURCE_SET,
     STATE_REQUEST, STATE_SET, SUBTITLE_SELECT, SUBTITLE_SET, VOLUME_PREVIOUS, VOLUME_SET
 } from "./actions";
+import {Level, MediaPlaylist} from "hls.js";
 
 const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState => {
     switch (action.type) {
@@ -12,7 +13,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             state: {
                 ...state.state,
-                current: action.payload
+                current: action.payload as HlsPlaybackStates
             }
         };
     case STATE_REQUEST:
@@ -20,20 +21,20 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             state: {
                 ...state.state,
-                requested: action.payload
+                requested: action.payload as HlsPlaybackStates
             }
         };
     case DURATION_SET:
         return {
             ...state,
-            duration: action.payload
+            duration: action.payload as number|undefined
         };
     case VOLUME_SET:
         return {
             ...state,
             volume: {
                 ...state.volume,
-                current: action.payload
+                current: action.payload as number
             }
         };
     case VOLUME_PREVIOUS:
@@ -41,7 +42,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             volume: {
                 ...state.volume,
-                previousVolume: action.payload
+                previousVolume: action.payload as number|undefined
             }
         };
     case POSITION_SET:
@@ -49,7 +50,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             position: {
                 ...state.position,
-                current: action.payload
+                current: action.payload as number|undefined
             }
         };
     case POSITION_REQUEST:
@@ -57,25 +58,25 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             position: {
                 ...state.position,
-                requested: action.payload
+                requested: action.payload as number|undefined
             }
         };
     case AVAILABLE_SET:
         return {
             ...state,
-            available: action.payload
+            available: action.payload as [number, number][]
         };
     case SOURCE_SET:
         return {
             ...state,
-            source: action.payload
+            source: action.payload as string|undefined
         };
     case QUALITY_SET:
         return {
             ...state,
             quality: {
                 ...state.quality,
-                available: action.payload
+                available: action.payload as Level[]
             }
         };
     case QUALITY_SELECT:
@@ -83,7 +84,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             quality: {
                 ...state.quality,
-                selected: action.payload
+                selected: action.payload as number|undefined
             }
         };
     case AUDIO_SET:
@@ -91,7 +92,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             audio: {
                 ...state.audio,
-                available: action.payload
+                available: action.payload as MediaPlaylist[]
             }
         };
     case AUDIO_SELECT:
@@ -99,7 +100,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             audio: {
                 ...state.audio,
-                selected: action.payload
+                selected: action.payload as number|undefined
             }
         };
     case SUBTITLE_SET:
@@ -107,7 +108,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             subtitle: {
                 ...state.subtitle,
-                available: action.payload
+                available: action.payload as MediaPlaylist[]
             }
         };
     case SUBTITLE_SELECT:
@@ -115,7 +116,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             subtitle: {
                 ...state.subtitle,
-                selected: action.payload
+                selected: action.payload as number|undefined
             }
         };
     case PLAYBACK_SET:
@@ -123,7 +124,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             playback: {
                 ...state.playback,
-                rate: action.payload
+                rate: action.payload as number|undefined
             }
         };
     case PLAYBACK_REQUEST:
@@ -131,7 +132,7 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             playback: {
                 ...state.playback,
-                requested: action.payload
+                requested: action.payload as number|undefined
             }
         };
     }
