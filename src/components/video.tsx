@@ -2,9 +2,9 @@ import React, {useCallback, useEffect} from "react";
 import {useHlsHooksContext} from "../context";
 import Hls from "hls.js";
 import {
-    AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET, POSITION_REQUEST,
-    POSITION_SET, QUALITY_REQUEST, QUALITY_SELECT, QUALITY_SET, STATE_REQUEST, STATE_SET, SUBTITLE_SELECT, SUBTITLE_SET,
-    VOLUME_SET
+    AUDIO_REQUEST, AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET,
+    POSITION_REQUEST, POSITION_SET, QUALITY_REQUEST, QUALITY_SELECT, QUALITY_SET, STATE_REQUEST, STATE_SET,
+    SUBTITLE_SELECT, SUBTITLE_SET, SUBTITLE_REQUEST, VOLUME_SET
 } from "../actions";
 
 const Video = ({
@@ -82,6 +82,22 @@ const Video = ({
             dispatch({ type: QUALITY_REQUEST });
         }
     }, [state.quality.requested]);
+
+    // Audio track change requested.
+    useEffect(() => {
+        if (typeof state.audio.requested !== 'undefined' && hlsRef.current !== null && hlsRef.current.audioTrack !== state.audio.requested) {
+            hlsRef.current.audioTrack = state.audio.requested;
+            dispatch({ type: AUDIO_REQUEST });
+        }
+    }, [state.audio.requested]);
+
+    // Subtitle track change requested.
+    useEffect(() => {
+        if (typeof state.subtitle.requested !== 'undefined' && hlsRef.current !== null && hlsRef.current.subtitleTrack !== state.subtitle.requested) {
+            hlsRef.current.subtitleTrack = state.subtitle.requested;
+            dispatch({ type: SUBTITLE_REQUEST });
+        }
+    }, [state.subtitle.requested]);
 
     const availableQualitiesUpdatedHandler = useCallback(() => {
         events?.onQualitiesChange?.("component");

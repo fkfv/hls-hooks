@@ -62,6 +62,9 @@ export type HlsHooksState = {
 
         // Currently selected track.
         selected?: number;
+
+        // Requested track.
+        requested?: number;
     };
 
     subtitle: {
@@ -70,6 +73,9 @@ export type HlsHooksState = {
 
         // Selected subtitle track.
         selected?: number;
+
+        // Requested track.
+        requested?: number;
     };
 
     playback: {
