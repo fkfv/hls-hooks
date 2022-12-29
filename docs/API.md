@@ -24,6 +24,7 @@
     - [usePlaybackState()](#useplaybackstate--)
     - [usePosition()](#useposition--)
     - [useQuality()](#usequality--)
+    - [useRefs()](#userefs--)
     - [useSubtitleTrack()](#usesubtitletrack--)
     - [useVolume()](#usevolume--)
   - [Events](#events-1)
@@ -246,6 +247,17 @@ const useQuality: () => [
 ];
 ```
 Get the available qualities, and any currently selected quality.
+
+#### useRefs()
+```ts
+import {useRefs} from "hls-hooks";
+
+const useRefs: () => [
+    videoElementRef?: RefObject<HTMLVideoElement>,
+    hlsRef?: RefObject<Hls|null>
+];
+```
+Get references to the current `<video>` element and the HLS.js `Hls` object.
 
 #### useSubtitleTrack()
 ```ts
