@@ -11,7 +11,7 @@ const Video = ({
     children,
     ...props
 }:  React.DetailedHTMLProps<React.VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement>) => {
-    const {videoElementRef, hlsRef, dispatch, state} = useHlsHooksContext();
+    const {videoElementRef, hlsRef, dispatch, state, events} = useHlsHooksContext();
 
     if (!videoElementRef || !hlsRef || !dispatch || !state) {
         return null;
@@ -20,6 +20,8 @@ const Video = ({
     // State change requested.
     useEffect(() => {
         if (typeof state.state.requested !== "undefined" && state.state.current !== state.state.requested && videoElementRef.current !== null) {
+            events?.onPlaybackChange?.('external');
+
             switch (state.state.requested) {
             case "paused":
                 videoElementRef.current?.pause();
@@ -36,6 +38,8 @@ const Video = ({
     // Volume change requested.
     useEffect(() => {
         if (typeof state.volume.current !== "undefined" && videoElementRef.current !== null) {
+            events?.onVolumeChange?.('external');
+
             videoElementRef.current.volume = state.volume.current;
         }
     }, [state.volume.current]);
@@ -43,6 +47,8 @@ const Video = ({
     // Position change requested.
     useEffect(() => {
         if (typeof state.position !== "undefined" && typeof state.position.requested === "number" && videoElementRef.current !== null) {
+            events?.onPositionChange?.('external');
+
             if (typeof videoElementRef.current.fastSeek === 'function') {
                 videoElementRef.current.fastSeek(state.position.requested);
             } else {
@@ -55,6 +61,8 @@ const Video = ({
     // Source change requested.
     useEffect(() => {
         if (typeof state.source !== "undefined" && hlsRef.current !== null) {
+            events?.onSourceChange?.('external');
+
             hlsRef.current?.loadSource(state.source);
         }
     }, [state.source]);
@@ -68,26 +76,38 @@ const Video = ({
     }, [state.playback.requested]);
 
     const availableQualitiesUpdatedHandler = useCallback(() => {
+        events?.onQualitiesChange?.('component');
+
         dispatch({ type: QUALITY_SET, payload: hlsRef.current?.levels });
     }, [dispatch]);
 
     const qualityUpdatedHandler = useCallback(() => {
+        events?.onQualityChange?.('component');
+
         dispatch({ type: QUALITY_SELECT, payload: hlsRef.current?.currentLevel });
     }, [dispatch]);
 
     const availableAudioTracksUpdatedHandler = useCallback(() => {
+        events?.onAudioTracksChange?.('component');
+
         dispatch({ type: AUDIO_SET, payload: hlsRef.current?.audioTracks});
     }, [dispatch]);
 
     const audioTrackUpdatedHandler = useCallback(() => {
+        events?.onAudioTrackChange?.('component');
+
         dispatch({ type: AUDIO_SELECT, payload: hlsRef.current?.audioTrack });
     }, [dispatch]);
 
     const availableSubtitleTracksUpdatedHandler = useCallback(() => {
+        events?.onSubtitleTracksChange?.('component');
+
         dispatch({ type: SUBTITLE_SET, payload: hlsRef.current?.subtitleTracks });
     }, [dispatch]);
 
     const subtitleTrackUpdatedHandler = useCallback(() => {
+        events?.onSubtitleTrackChange?.('component');
+
         dispatch({ type: SUBTITLE_SELECT, payload: hlsRef.current?.subtitleTrack });
     }, [dispatch]);
 
@@ -138,16 +158,41 @@ const Video = ({
             <video
                 onCanPlay={() => {
                     dispatch({ type: STATE_SET, payload: "ready" });
+                    events?.onPlaybackChange?.('component');
                 }}
-                onPlaying={() => dispatch({ type: STATE_SET, payload: "playing" })}
-                onPause={() => dispatch({ type: STATE_SET, payload: "paused" })}
-                onWaiting={() => dispatch({ type: STATE_SET, payload: "loading" })}
-                onLoadStart={() => dispatch({ type: STATE_SET, payload: "loading" })}
+                onPlaying={() => {
+                    dispatch({ type: STATE_SET, payload: "playing" });
+                    events?.onPlaybackChange?.('component');
+                }}
+                onPause={() => {
+                    dispatch({ type: STATE_SET, payload: "paused" });
+                    events?.onPlaybackChange?.('component');
+                }}
+                onWaiting={() => {
+                    dispatch({ type: STATE_SET, payload: "loading" });
+                    events?.onPlaybackChange?.('component');
+                }}
+                onLoadStart={() => {
+                    dispatch({ type: STATE_SET, payload: "loading" });
+                    events?.onPlaybackChange?.('component');
+                }}
 
-                onDurationChange={() => dispatch({ type: DURATION_SET, payload: videoElementRef.current?.duration })}
-                onVolumeChange={() => dispatch({ type: VOLUME_SET, payload: videoElementRef.current?.volume })}
-                onTimeUpdate={() => dispatch({ type: POSITION_SET, payload: videoElementRef.current?.currentTime })}
-                onProgress={() => dispatch({ type: AVAILABLE_SET, payload: convertRanges(videoElementRef.current?.buffered) })}
+                onDurationChange={() => {
+                    dispatch({ type: DURATION_SET, payload: videoElementRef.current?.duration });
+                    events?.onDurationChange?.('component');
+                }}
+                onVolumeChange={() => {
+                    dispatch({ type: VOLUME_SET, payload: videoElementRef.current?.volume });
+                    events?.onVolumeChange?.('component');
+                }}
+                onTimeUpdate={() => {
+                    dispatch({ type: POSITION_SET, payload: videoElementRef.current?.currentTime });
+                    events?.onPositionChange?.('component');
+                }}
+                onProgress={() => {
+                    dispatch({ type: AVAILABLE_SET, payload: convertRanges(videoElementRef.current?.buffered) });
+                    events?.onAvailableChange?.('component');
+                }}
                 onRateChange={() => dispatch({ type: PLAYBACK_SET, payload: videoElementRef.current?.playbackRate })}
 
                 ref={videoElementRef}
