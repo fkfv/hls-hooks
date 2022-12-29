@@ -9,6 +9,7 @@ export {default as usePlaybackState} from "./hooks/use-playback-state";
 export {default as usePosition} from "./hooks/use-position";
 export {default as useQuality} from "./hooks/use-quality";
 export {default as useRefs} from "./hooks/use-refs";
+export {default as useSource} from "./hooks/use-source";
 export {default as useSubtitleTrack} from "./hooks/use-subtitle-track";
 export {default as useVolume} from "./hooks/use-volume";
 
