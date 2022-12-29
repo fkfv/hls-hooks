@@ -25,6 +25,7 @@
     - [usePosition()](#useposition--)
     - [useQuality()](#usequality--)
     - [useRefs()](#userefs--)
+    - [useSource()](#usesource--)
     - [useSubtitleTrack()](#usesubtitletrack--)
     - [useVolume()](#usevolume--)
   - [Events](#events-1)
@@ -258,6 +259,17 @@ const useRefs: () => [
 ];
 ```
 Get references to the current `<video>` element and the HLS.js `Hls` object.
+
+#### useSource()
+```ts
+import {useSource} from "hls-hooks";
+
+const useSource: () => [
+    source: string|undefined,
+    setSource: (source: string|undefined) => void
+];
+```
+Get or set the current video source.
 
 #### useSubtitleTrack()
 ```ts

@@ -85,7 +85,7 @@ const Video = ({
 
     // Audio track change requested.
     useEffect(() => {
-        if (typeof state.audio.requested !== 'undefined' && hlsRef.current !== null && hlsRef.current.audioTrack !== state.audio.requested) {
+        if (typeof state.audio.requested !== "undefined" && hlsRef.current !== null && hlsRef.current.audioTrack !== state.audio.requested) {
             hlsRef.current.audioTrack = state.audio.requested;
             dispatch({ type: AUDIO_REQUEST });
         }
@@ -93,7 +93,7 @@ const Video = ({
 
     // Subtitle track change requested.
     useEffect(() => {
-        if (typeof state.subtitle.requested !== 'undefined' && hlsRef.current !== null && hlsRef.current.subtitleTrack !== state.subtitle.requested) {
+        if (typeof state.subtitle.requested !== "undefined" && hlsRef.current !== null && hlsRef.current.subtitleTrack !== state.subtitle.requested) {
             hlsRef.current.subtitleTrack = state.subtitle.requested;
             dispatch({ type: SUBTITLE_REQUEST });
         }
