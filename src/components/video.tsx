@@ -2,9 +2,9 @@ import React, {useCallback, useEffect} from "react";
 import {useHlsHooksContext} from "../context";
 import Hls from "hls.js";
 import {
-    AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET,
-    POSITION_REQUEST, POSITION_SET, QUALITY_SELECT, QUALITY_SET, STATE_REQUEST, STATE_SET, SUBTITLE_SELECT,
-    SUBTITLE_SET, VOLUME_SET
+    AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET, POSITION_REQUEST,
+    POSITION_SET, QUALITY_REQUEST, QUALITY_SELECT, QUALITY_SET, STATE_REQUEST, STATE_SET, SUBTITLE_SELECT, SUBTITLE_SET,
+    VOLUME_SET
 } from "../actions";
 
 const Video = ({
@@ -20,7 +20,7 @@ const Video = ({
     // State change requested.
     useEffect(() => {
         if (typeof state.state.requested !== "undefined" && state.state.current !== state.state.requested && videoElementRef.current !== null) {
-            events?.onPlaybackChange?.('external');
+            events?.onPlaybackChange?.("external");
 
             switch (state.state.requested) {
             case "paused":
@@ -38,7 +38,7 @@ const Video = ({
     // Volume change requested.
     useEffect(() => {
         if (typeof state.volume.current !== "undefined" && videoElementRef.current !== null) {
-            events?.onVolumeChange?.('external');
+            events?.onVolumeChange?.("external");
 
             videoElementRef.current.volume = state.volume.current;
         }
@@ -47,9 +47,9 @@ const Video = ({
     // Position change requested.
     useEffect(() => {
         if (typeof state.position !== "undefined" && typeof state.position.requested === "number" && videoElementRef.current !== null) {
-            events?.onPositionChange?.('external');
+            events?.onPositionChange?.("external");
 
-            if (typeof videoElementRef.current.fastSeek === 'function') {
+            if (typeof videoElementRef.current.fastSeek === "function") {
                 videoElementRef.current.fastSeek(state.position.requested);
             } else {
                 videoElementRef.current.currentTime = state.position.requested;
@@ -61,7 +61,7 @@ const Video = ({
     // Source change requested.
     useEffect(() => {
         if (typeof state.source !== "undefined" && hlsRef.current !== null) {
-            events?.onSourceChange?.('external');
+            events?.onSourceChange?.("external");
 
             hlsRef.current?.loadSource(state.source);
         }
@@ -75,38 +75,55 @@ const Video = ({
         }
     }, [state.playback.requested]);
 
-    const availableQualitiesUpdatedHandler = useCallback(() => {
-        events?.onQualitiesChange?.('component');
+    // Quality change requested.
+    useEffect(() => {
+        if (typeof state.quality.requested !== "undefined" && hlsRef.current !== null && hlsRef.current.loadLevel !== state.quality.requested) {
+            hlsRef.current.currentLevel = state.quality.requested;
+            dispatch({ type: QUALITY_REQUEST });
+        }
+    }, [state.quality.requested]);
 
-        dispatch({ type: QUALITY_SET, payload: hlsRef.current?.levels });
+    const availableQualitiesUpdatedHandler = useCallback(() => {
+        events?.onQualitiesChange?.("component");
+
+        dispatch({
+            type: QUALITY_SET,
+            payload: hlsRef.current?.levels
+        });
     }, [dispatch]);
 
     const qualityUpdatedHandler = useCallback(() => {
-        events?.onQualityChange?.('component');
+        events?.onQualityChange?.("component");
 
-        dispatch({ type: QUALITY_SELECT, payload: hlsRef.current?.currentLevel });
+        dispatch({
+            type: QUALITY_SELECT,
+            payload: {
+                current: hlsRef.current?.loadLevel,
+                auto: hlsRef.current?.autoLevelEnabled
+            }
+        });
     }, [dispatch]);
 
     const availableAudioTracksUpdatedHandler = useCallback(() => {
-        events?.onAudioTracksChange?.('component');
+        events?.onAudioTracksChange?.("component");
 
         dispatch({ type: AUDIO_SET, payload: hlsRef.current?.audioTracks});
     }, [dispatch]);
 
     const audioTrackUpdatedHandler = useCallback(() => {
-        events?.onAudioTrackChange?.('component');
+        events?.onAudioTrackChange?.("component");
 
         dispatch({ type: AUDIO_SELECT, payload: hlsRef.current?.audioTrack });
     }, [dispatch]);
 
     const availableSubtitleTracksUpdatedHandler = useCallback(() => {
-        events?.onSubtitleTracksChange?.('component');
+        events?.onSubtitleTracksChange?.("component");
 
         dispatch({ type: SUBTITLE_SET, payload: hlsRef.current?.subtitleTracks });
     }, [dispatch]);
 
     const subtitleTrackUpdatedHandler = useCallback(() => {
-        events?.onSubtitleTrackChange?.('component');
+        events?.onSubtitleTrackChange?.("component");
 
         dispatch({ type: SUBTITLE_SELECT, payload: hlsRef.current?.subtitleTrack });
     }, [dispatch]);
@@ -158,40 +175,40 @@ const Video = ({
             <video
                 onCanPlay={() => {
                     dispatch({ type: STATE_SET, payload: "ready" });
-                    events?.onPlaybackChange?.('component');
+                    events?.onPlaybackChange?.("component");
                 }}
                 onPlaying={() => {
                     dispatch({ type: STATE_SET, payload: "playing" });
-                    events?.onPlaybackChange?.('component');
+                    events?.onPlaybackChange?.("component");
                 }}
                 onPause={() => {
                     dispatch({ type: STATE_SET, payload: "paused" });
-                    events?.onPlaybackChange?.('component');
+                    events?.onPlaybackChange?.("component");
                 }}
                 onWaiting={() => {
                     dispatch({ type: STATE_SET, payload: "loading" });
-                    events?.onPlaybackChange?.('component');
+                    events?.onPlaybackChange?.("component");
                 }}
                 onLoadStart={() => {
                     dispatch({ type: STATE_SET, payload: "loading" });
-                    events?.onPlaybackChange?.('component');
+                    events?.onPlaybackChange?.("component");
                 }}
 
                 onDurationChange={() => {
                     dispatch({ type: DURATION_SET, payload: videoElementRef.current?.duration });
-                    events?.onDurationChange?.('component');
+                    events?.onDurationChange?.("component");
                 }}
                 onVolumeChange={() => {
                     dispatch({ type: VOLUME_SET, payload: videoElementRef.current?.volume });
-                    events?.onVolumeChange?.('component');
+                    events?.onVolumeChange?.("component");
                 }}
                 onTimeUpdate={() => {
                     dispatch({ type: POSITION_SET, payload: videoElementRef.current?.currentTime });
-                    events?.onPositionChange?.('component');
+                    events?.onPositionChange?.("component");
                 }}
                 onProgress={() => {
                     dispatch({ type: AVAILABLE_SET, payload: convertRanges(videoElementRef.current?.buffered) });
-                    events?.onAvailableChange?.('component');
+                    events?.onAvailableChange?.("component");
                 }}
                 onRateChange={() => dispatch({ type: PLAYBACK_SET, payload: videoElementRef.current?.playbackRate })}
 
