@@ -1,8 +1,8 @@
 import {HlsHooksAction, HlsHooksState, HlsPlaybackStates} from "./types";
 import {
-    AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET,
-    POSITION_REQUEST, POSITION_SET, QUALITY_SELECT, QUALITY_SET, SOURCE_SET,
-    STATE_REQUEST, STATE_SET, SUBTITLE_SELECT, SUBTITLE_SET, VOLUME_PREVIOUS, VOLUME_SET
+    AUDIO_REQUEST, AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET,
+    POSITION_REQUEST, POSITION_SET, QUALITY_SELECT, QUALITY_SET, SOURCE_SET, STATE_REQUEST, STATE_SET, SUBTITLE_REQUEST,
+    SUBTITLE_SELECT, SUBTITLE_SET, VOLUME_PREVIOUS, VOLUME_SET
 } from "./actions";
 import {Level, MediaPlaylist} from "hls.js";
 
@@ -103,6 +103,14 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
                 selected: action.payload as number|undefined
             }
         };
+    case AUDIO_REQUEST:
+        return {
+            ...state,
+            audio: {
+                ...state.audio,
+                requested: action.payload as number|undefined
+            }
+        };
     case SUBTITLE_SET:
         return {
             ...state,
@@ -117,6 +125,14 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             subtitle: {
                 ...state.subtitle,
                 selected: action.payload as number|undefined
+            }
+        };
+    case SUBTITLE_REQUEST:
+        return {
+            ...state,
+            subtitle: {
+                ...state.subtitle,
+                requested: action.payload as number|undefined
             }
         };
     case PLAYBACK_SET:
