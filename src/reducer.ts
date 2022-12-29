@@ -1,10 +1,15 @@
 import {HlsHooksAction, HlsHooksState, HlsPlaybackStates} from "./types";
 import {
     AUDIO_REQUEST, AUDIO_SELECT, AUDIO_SET, AVAILABLE_SET, DURATION_SET, PLAYBACK_REQUEST, PLAYBACK_SET,
-    POSITION_REQUEST, POSITION_SET, QUALITY_SELECT, QUALITY_SET, SOURCE_SET, STATE_REQUEST, STATE_SET, SUBTITLE_REQUEST,
-    SUBTITLE_SELECT, SUBTITLE_SET, VOLUME_PREVIOUS, VOLUME_SET
+    POSITION_REQUEST, POSITION_SET, QUALITY_REQUEST, QUALITY_SELECT, QUALITY_SET, SOURCE_SET, STATE_REQUEST, STATE_SET,
+    SUBTITLE_REQUEST, SUBTITLE_SELECT, SUBTITLE_SET, VOLUME_PREVIOUS, VOLUME_SET
 } from "./actions";
 import {Level, MediaPlaylist} from "hls.js";
+
+type QualitySelectPayload = {
+    current: number|undefined;
+    auto: boolean|undefined;
+};
 
 const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState => {
     switch (action.type) {
@@ -84,7 +89,16 @@ const reducer = (state: HlsHooksState, action: HlsHooksAction): HlsHooksState =>
             ...state,
             quality: {
                 ...state.quality,
-                selected: action.payload as number|undefined
+                selected: (action.payload as QualitySelectPayload).current,
+                auto: (action.payload as QualitySelectPayload).auto
+            }
+        };
+    case QUALITY_REQUEST:
+        return {
+            ...state,
+            quality: {
+                ...state.quality,
+                requested: action.payload as number|undefined
             }
         };
     case AUDIO_SET:

@@ -9,6 +9,7 @@ export const AVAILABLE_SET = "available/set";
 export const SOURCE_SET = "source/set";
 export const QUALITY_SET = "quality/set";
 export const QUALITY_SELECT = "quality/select";
+export const QUALITY_REQUEST = "quality/request";
 export const AUDIO_SET = "audio/set";
 export const AUDIO_SELECT = "audio/select";
 export const AUDIO_REQUEST = "audio/request";

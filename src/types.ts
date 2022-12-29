@@ -48,6 +48,12 @@ export type HlsHooksState = {
 
         // Currently selected level.
         selected?: number;
+
+        // Requested level.
+        requested?: number;
+
+        // If the level was selected automatically.
+        auto?: boolean;
     };
 
     audio: {
